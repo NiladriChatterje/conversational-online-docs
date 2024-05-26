@@ -1,20 +1,28 @@
 'use client'
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { useRef } from 'react'
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai'
+import { ChatPromptTemplate } from '@langchain/core/prompts'
+import { useRef, useState } from 'react'
 
 
-const page = async (formData: { searchParams: { url: string } }) => {
+const page = (formData: { searchParams: { url: string } }) => {
     const { searchParams: { url } } = formData;
+    const [loadedData, setLoadedData] = useState<object>();
 
-    const loader = new CheerioWebBaseLoader(url);
+    try {
 
-    const docs = await loader.load();
+        const loader = new CheerioWebBaseLoader(url);
+        const chatgpt = new ChatOpenAI({});
+        loader.load().then(async result => {
+            const splitter = new RecursiveCharacterTextSplitter();
+            const splitDocs = await splitter.splitDocuments(result);
 
-    const splitter = new RecursiveCharacterTextSplitter();
-    const splitDocs = await splitter.splitDocuments(docs);
+            setLoadedData(splitDocs)
+            console.log(splitDocs)
+        });
+    } catch (e) { }
 
-    console.log(splitDocs)
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center p-24">
