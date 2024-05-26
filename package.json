@@ -1,6 +1,7 @@
 {
   "name": "langchain-project",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@langchain/community": "^0.2.3",
     "cheerio": "^1.0.0-rc.12",
     "langchain": "^0.2.2",
     "next": "14.2.3",
