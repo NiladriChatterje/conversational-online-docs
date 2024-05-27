@@ -2,10 +2,6 @@ import Image from "next/image";
 import { redirect } from 'next/navigation'
 export default function Home() {
 
-  // async function handleSubmit(formData: FormData) {
-  //   'use server'
-  //   redirect(`/chat?url=${formData.get('url')}`)
-  // }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
