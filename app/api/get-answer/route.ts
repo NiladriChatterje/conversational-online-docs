@@ -21,17 +21,18 @@ let documentChain: RunnableSequence<Record<string, unknown>, string>;
 let retrievalChain: Runnable<{ input: string; chat_history?: string | BaseMessage[] | undefined; } & { [key: string]: unknown; }, { context: Document<Record<string, any>>[]; answer: string; } & { [key: string]: unknown; }, RunnableConfig>;
 const ollama = new ChatOllama({
     baseUrl: 'http://localhost:11434',
+    useMMap: true,
     model: 'mistral',
 });
 const outputParser = new StringOutputParser();
 const embeddings = new OllamaEmbeddings({
     model: "nomic-embed-text",
-    maxConcurrency: 4,
+    maxConcurrency: 5,
     keepAlive: '5m',
     requestOptions: {
-        // useMMap: true, // use_mmap 1
-        numThread: 8, // num_thread 6
-        numGpu: 1, // num_gpu 1
+        useMMap: true,
+        numThread: 8,
+        numGpu: 1,
     },
 });
 const prompt = ChatPromptTemplate.fromMessages([
@@ -44,10 +45,21 @@ const prompt = ChatPromptTemplate.fromMessages([
 //start chat
 export async function POST(req: NextRequest) {
     const textFeed = await req.text();
-    console.log(retrievalChain)
-    if (retrievalChain === undefined) redirect('/')
-    const stream = await retrievalChain.stream({
+    console.log(documentChain)
+    if (documentChain === undefined) redirect('/');
+    console.log('question -- ', textFeed);
+    const stream = await documentChain.stream({
         input: textFeed,
+        context: [
+            new Document({
+                pageContent: `I am Niladri Chatterjee. I studied MCA from 
+                Heritage Institute of Technology. I started journey as
+                a software engineer as a react developer and learned 
+                a lot of stuffs in technical stuffs whether it is in
+                blockchain, ML or security. I have done my schooling from 
+                Calcutta Public School.`
+            })
+        ]
     });
 
     for await (const chunk of stream)
@@ -68,23 +80,23 @@ export async function GET(request: NextRequest) {
         const result = await loader.load()
         const splitter = new RecursiveCharacterTextSplitter();
         splitDocs = await splitter.splitDocuments(result);
-
-        vectorstore = await MemoryVectorStore.fromDocuments(
-            splitDocs,
-            embeddings
-        );
-
+        console.log(splitDocs)
+        // vectorstore = await MemoryVectorStore.fromDocuments(
+        //     splitDocs,
+        //     embeddings
+        // );
+        // console.log(vectorstore.embeddings)
         documentChain = await createStuffDocumentsChain({
             llm: ollama,
             prompt,
         });
 
-        const retriever = vectorstore.asRetriever();
+        // const retriever = vectorstore.asRetriever();
 
-        retrievalChain = await createRetrievalChain({
-            combineDocsChain: documentChain,
-            retriever,
-        });
+        // retrievalChain = await createRetrievalChain({
+        //     combineDocsChain: documentChain,
+        //     retriever,
+        // });
         return new NextResponse('parsed', { status: 200, statusText: "ok" });
     } catch (e: any) {
         console.log(e.message);
