@@ -47,7 +47,10 @@ const prompt = ChatPromptTemplate.fromMessages([
 export async function POST(req: NextRequest) {
     const textFeed = await req.text();
     console.log(documentChain)
-    if (documentChain === undefined) redirect('/');
+    if (documentChain === undefined) return NextResponse.json({ message: 'error' }, {
+        status: 500,
+        statusText: 'Document chain unfortunately not loaded'
+    });
     console.log('question -- ', textFeed);
     const stream = await documentChain.stream({
         input: textFeed,
