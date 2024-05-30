@@ -1,5 +1,6 @@
 'use server'
 import { NextRequest, NextResponse } from "next/server";
+import { StreamingTextResponse } from "ai";
 import { redirect } from 'next/navigation'
 import { Document } from "@langchain/core/documents";
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
@@ -55,17 +56,17 @@ export async function POST(req: NextRequest) {
                 pageContent: `I am Niladri Chatterjee. I studied MCA from 
                 Heritage Institute of Technology. I started journey as
                 a software engineer as a react developer and learned 
-                a lot of stuffs in technical stuffs whether it is in
+                a lot of technical stuffs whether it is in
                 blockchain, ML or security. I have done my schooling from 
                 Calcutta Public School.`
             })
-        ]
+        ],
     });
 
-    for await (const chunk of stream)
-        process.stdout.write(chunk + '')
+    // for await (const chunk of stream)
+    //     process.stdout.write(chunk + '')
 
-    return NextResponse.json({ message: 'stream' })
+    return new StreamingTextResponse(stream)
 }
 
 
