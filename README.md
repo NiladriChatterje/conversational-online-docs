@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![WorkFlow](https://github.com/NiladriChatterje/conversational-online-docs/assets/107443816/5fa5c402-89b5-4470-a060-e24ecdfef4b9)This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
@@ -15,22 +15,19 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+what I have done is basically pulled an AI image (mistral for my case) through 
+```bash Ollama pull mistral``` 
+You can pull your AI model according to your choice. A lot of model is available including llama 2, llama 3 and many more.
+after pulling the image, make sure that the image is running otherwise server won't able to accept queries through endpoints.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Simple Workflow :
+![WorkFlow](https://github.com/NiladriChatterje/conversational-online-docs/assets/107443816/7f50dbfa-88a6-4a90-82d4-aa9a058d9d94)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# Issue :
+Creation of embeddings and storing in Memory and treating as a vectorStore requires a descent hardware. And currently such hardware
+is unavailable to me. :)
+thus, A static context is provided which is a direct document providing some infos about me. One can test with the provided context
+and play with it.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Demo:
+![Demo-Project](https://github.com/NiladriChatterje/conversational-online-docs/assets/107443816/512f78ef-2501-4067-8fb0-ded70a337367)
