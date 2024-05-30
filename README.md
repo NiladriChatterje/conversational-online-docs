@@ -1,5 +1,3 @@
-![WorkFlow](https://github.com/NiladriChatterje/conversational-online-docs/assets/107443816/5fa5c402-89b5-4470-a060-e24ecdfef4b9)This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
 First, run the development server:
