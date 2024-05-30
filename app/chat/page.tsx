@@ -11,7 +11,7 @@ const page = () => {
         api: 'api/get-answer'
     });
     const router = useRouter();
-    console.log(messages)
+
     const inputRef = useRef<HTMLInputElement | any>(null);
 
     async function query() {
@@ -42,12 +42,13 @@ const page = () => {
                 <nav className="fixed top-0 left-0 w-100% p-5"><h2>ChatMe</h2></nav>
                 <section className='min-h-[60vh] block scroll-smooth overflow-y-auto overflow-x-clip rounded-md min-w-[85vw] md:min-w-[55vw] lg:min-w-[55vw] '>
                     {messages && messages.map(m => (
-                        <div key={m.id} className="block relative w-full">
+                        <div key={m.id} className={`flex flex-col relative w-full 
+                        items-${m.role === 'user' ? 'end' : 'start'}`}>
                             <article
                                 className={m.role === 'user' ?
                                     'relative max-w-[70%] block border-none border-2 border-slate-100 bg-slate-900 py-2.5 mt-5 px-5 me-2 text-sm font-medium text-white bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700'
                                     :
-                                    'relatve bg-gradient-to-r from-slate-500 to-sky-800 block max-w-[60%] rounded-lg mt-2 mr-[1px] py-2.5 px-5 text-sm font-medium'
+                                    'relatve bg-gradient-to-tr from-slate-900 to-sky-900 block max-w-[70%] rounded-lg mt-2 mr-[1px] py-2.5 px-5 text-sm font-medium text-justify'
                                 }
                             >
                                 {m.role === 'user' ? 'User: ' : 'AI: '}
