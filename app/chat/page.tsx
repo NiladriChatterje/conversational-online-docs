@@ -7,11 +7,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import SVGArrow from '@/app/right-arrow.svg'
 
 const page = () => {
-    const { messages, input, handleSubmit, handleInputChange } = useChat({
+    const { messages, input, error, handleSubmit, handleInputChange } = useChat({
         api: 'api/get-answer'
     });
     const router = useRouter();
-
+    console.log(messages)
+    if (error) toast.error(error.message)
     const inputRef = useRef<HTMLInputElement | any>(null);
 
     async function query() {
@@ -79,7 +80,6 @@ const page = () => {
                         className='text-black focus:text-white max-h-8 md:max-h-15 lg:max-h-15 w-[90%] rounded-md focus:bg-blue-900 ease-in duration-100 focus:outline-none focus:border-r-2 focus:border-r-blue-700 px-10 py-[2.5px] bg-transparent' />
                     <button type='submit'
                         className='bg-transparent border-none flex items-center justify-center'>
-
                         <Image
                             className='cursor-pointer'
                             width={20}
