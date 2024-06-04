@@ -12,7 +12,7 @@ const page = () => {
     });
     const router = useRouter();
     console.log(messages)
-    if (error) toast.error(error.message)
+    if (error) toast.error("some issue encountered")
     const inputRef = useRef<HTMLInputElement | any>(null);
 
     async function query() {

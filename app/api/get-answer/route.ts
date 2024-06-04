@@ -1,6 +1,7 @@
 'use server'
 import { NextRequest, NextResponse } from "next/server";
-import { StreamingTextResponse } from "ai";
+import { StreamingTextResponse, AIStream, createChunkDecoder } from "ai";
+import { Readable, Transform } from "stream";
 import { redirect } from 'next/navigation'
 import { Document } from "@langchain/core/documents";
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
@@ -18,7 +19,12 @@ import { Runnable, RunnableConfig, RunnableSequence } from "@langchain/core/runn
 let splitDocs: Document[];
 let vectorstore: MemoryVectorStore;
 let documentChain: RunnableSequence<Record<string, unknown>, string>;
-let retrievalChain: Runnable<{ input: string; chat_history?: string | BaseMessage[] | undefined; } & { [key: string]: unknown; }, { context: Document<Record<string, any>>[]; answer: string; } & { [key: string]: unknown; }, RunnableConfig>;
+let retrievalChain: Runnable<{ input: string; chat_history?: string | BaseMessage[] | undefined; } & { [key: string]: unknown; }, {
+    context?: Document[];
+    answer: string;
+} & {
+    [key: string]: unknown;
+}, RunnableConfig>;
 const ollama = new ChatOllama({
     baseUrl: 'http://localhost:11434',
     useMMap: true,
@@ -39,38 +45,40 @@ const prompt = ChatPromptTemplate.fromTemplate(`Answer the following question ba
 {context}
 Question: {input}`)
 
-
-
+ollama.pipe(outputParser)
+const objectToStringTransform = new Transform({
+    readableObjectMode: true,
+    writableObjectMode: true,
+    transform(chunk, encoding, callback) {
+        try {
+            // extracting String Field
+            const str = chunk.answer;
+            callback(null, str);
+        } catch (err: Error | any) {
+            callback(err);
+        }
+    }
+});
 //start chat
 export async function POST(req: NextRequest) {
     const textFeed = await req.text();
     console.log(retrievalChain)
-    if (retrievalChain === undefined) return NextResponse.json({ message: 'error' }, {
-        status: 500,
-        statusText: 'Retrieval chain unfortunately not loaded'
-    });
+    if (retrievalChain === undefined) {
+
+        return NextResponse.json({ message: 'error' }, {
+            status: 500,
+            statusText: 'Retrieval chain unfortunately not loaded'
+        });
+    }
     console.log('\nquestion -- ', textFeed);
     const stream = await retrievalChain.stream({
         input: textFeed,
-        // context: [
-        //     new Document({
-        //         pageContent: `I am Niladri Chatterjee. I studied MCA from 
-        //         Heritage Institute of Technology. I started journey as
-        //         a software engineer as a react developer and learned 
-        //         a lot of technical stuffs whether it is in
-        //         blockchain, ML or security. I have done my schooling from 
-        //         Calcutta Public School.`
-        //     })
-        // ],
     });
-    console.log(stream);
-    let string = ''
-    // for await (const chunk of stream) {
-    //     process.stdout.write(chunk.answer);
-    //     string += chunk.answer;
-    // };
 
-    return new StreamingTextResponse(stream)
+    for await (const chunk of stream)
+        process.stdout.write(chunk['answer']);
+
+    return new StreamingTextResponse(stream);
 }
 
 
