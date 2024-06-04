@@ -7,12 +7,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import SVGArrow from '@/app/right-arrow.svg'
 
 const page = () => {
-    const { messages, input, error, handleSubmit, handleInputChange } = useChat({
+    const { messages, input, setMessages, error, handleSubmit, handleInputChange } = useChat({
         api: 'api/get-answer'
     });
     const router = useRouter();
     console.log(messages)
-    if (error) toast.error("some issue encountered")
+
     const inputRef = useRef<HTMLInputElement | any>(null);
 
     async function query() {
@@ -20,19 +20,18 @@ const page = () => {
             toast.error('Empty field isn\'t queryable! ');
             return;
         }
-
         inputRef.current.value = '';
-        // const response = await fetch(`http://localhost:3000/api/get-answer`, {
-        //     method: 'POST',
-        //     headers: {
-        //         "Content-Type": 'text/plain',
-        //         "timeout": "30000"
-        //     },
-        //     body: textFeed
-        // });
-        // // const { message } = await response.json()
+        const response = await fetch(`http://localhost:3000/api/get-answer`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'text/plain',
+                "timeout": "30000"
+            },
+            body: ""
+        });
+        // const { message } = await response.json()
 
-        // console.log("response : ", response.json())
+        console.log("response : ", response.json())
     }
 
     return (

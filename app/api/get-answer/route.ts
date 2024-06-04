@@ -1,13 +1,13 @@
 'use server'
 import { NextRequest, NextResponse } from "next/server";
-import { StreamingTextResponse, AIStream, createChunkDecoder } from "ai";
-import { Readable, Transform } from "stream";
+import { StreamingTextResponse, AIStream, } from "ai";
+import { Readable, Transform } from "node:stream";
 import { redirect } from 'next/navigation'
 import { Document } from "@langchain/core/documents";
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
-import { BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { BaseMessage } from "@langchain/core/messages";
 import { OllamaEmbeddings } from '@langchain/community/embeddings/ollama';
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
@@ -16,15 +16,18 @@ import { createRetrievalChain } from "langchain/chains/retrieval";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { Runnable, RunnableConfig, RunnableSequence } from "@langchain/core/runnables";
 
+
 let splitDocs: Document[];
 let vectorstore: MemoryVectorStore;
 let documentChain: RunnableSequence<Record<string, unknown>, string>;
-let retrievalChain: Runnable<{ input: string; chat_history?: string | BaseMessage[] | undefined; } & { [key: string]: unknown; }, {
-    context?: Document[];
-    answer: string;
-} & {
-    [key: string]: unknown;
-}, RunnableConfig>;
+let retrievalChain: Runnable<{ input: string; chat_history?: string | BaseMessage[] | undefined; } & { [key: string]: unknown; },
+    {
+        context: Document[];
+        answer: string;
+    } & {
+        [key: string]: unknown;
+    }
+    , RunnableConfig>;
 const ollama = new ChatOllama({
     baseUrl: 'http://localhost:11434',
     useMMap: true,
@@ -45,20 +48,14 @@ const prompt = ChatPromptTemplate.fromTemplate(`Answer the following question ba
 {context}
 Question: {input}`)
 
-ollama.pipe(outputParser)
-const objectToStringTransform = new Transform({
-    readableObjectMode: true,
-    writableObjectMode: true,
+const extractString = new Transform({
     transform(chunk, encoding, callback) {
-        try {
-            // extracting String Field
-            const str = chunk.answer;
-            callback(null, str);
-        } catch (err: Error | any) {
-            callback(err);
-        }
-    }
-});
+        callback(null, chunk.answer)
+    },
+})
+
+ollama.pipe(outputParser)
+
 //start chat
 export async function POST(req: NextRequest) {
     const textFeed = await req.text();
@@ -75,10 +72,19 @@ export async function POST(req: NextRequest) {
         input: textFeed,
     });
 
-    for await (const chunk of stream)
-        process.stdout.write(chunk['answer']);
+    try {
+        for await (const chunk of stream) {
+            process.stdout.write(`${chunk.answer}`);
+        }
+
+    } catch (error: Error | any) {
+        console.log(error.message)
+    } finally {
+    }
+
 
     return new StreamingTextResponse(stream);
+    return new NextResponse('done', { status: 200 })
 }
 
 
@@ -98,7 +104,6 @@ export async function GET(request: NextRequest) {
             splitDocs,
             embeddings
         );
-        console.log("embeddings : " + vectorstore.embeddings)
         documentChain = await createStuffDocumentsChain({
             llm: ollama,
             prompt,
@@ -110,7 +115,7 @@ export async function GET(request: NextRequest) {
             combineDocsChain: documentChain,
             retriever,
         });
-        console.log(retrievalChain);
+        // console.log(retrievalChain);
         if (retrievalChain)
             return new NextResponse('parsed', { status: 200, statusText: "ok" });
         else throw new Error();
