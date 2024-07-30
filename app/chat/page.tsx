@@ -8,7 +8,7 @@ import SVGArrow from '@/app/right-arrow.svg'
 import { HiSpeakerWave } from "react-icons/hi2";
 import PreLoader from '@/app/preloader.svg'
 
-const page = () => {
+const Page = () => {
     const { messages, isLoading, input, error, handleSubmit, handleInputChange } = useChat({
         api: 'api/get-answer',
         streamMode: 'text',
@@ -132,4 +132,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
