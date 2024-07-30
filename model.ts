@@ -6,7 +6,6 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable, RunnableConfig, RunnableSequence } from "@langchain/core/runnables";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { Readable, Transform } from "node:stream";
 
 
 type abc = {
@@ -29,13 +28,14 @@ export const Package: EnitirePackage = {};
 export const ollama = new ChatOllama({
     baseUrl: 'http://localhost:11434',
     useMMap: true,
+    keepAlive: '20m',
     model: 'mistral',
 });
 const outputParser = new StringOutputParser();
 export const embeddings = new OllamaEmbeddings({
     model: "nomic-embed-text",
     maxConcurrency: 5,
-    keepAlive: '5m',
+    keepAlive: '20m',
     requestOptions: {
         useMMap: true,
         numThread: 8,
@@ -45,12 +45,6 @@ export const embeddings = new OllamaEmbeddings({
 export const prompt = ChatPromptTemplate.fromTemplate(`Answer the following question based only on the provided context:
 {context}
 Question: {input}`)
-
-export const extractString = new Transform({
-    transform(chunk, encoding, callback) {
-        callback(null, chunk.answer)
-    },
-})
 
 ollama.pipe(outputParser);
 

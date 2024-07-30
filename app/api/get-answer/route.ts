@@ -54,6 +54,8 @@ export async function GET(request: NextRequest) {
         const splitter = new RecursiveCharacterTextSplitter();
         Package.splitDocs = await splitter.splitDocuments(result);
         console.log(Package.splitDocs)
+        if (Package.splitDocs.length === 0)
+            return new NextResponse('<<Scrapping not allowed in this site>>', { status: 500 });
         Package.vectorstore = await MemoryVectorStore.fromDocuments(
             Package.splitDocs,
             embeddings
