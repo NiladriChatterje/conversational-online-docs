@@ -35,9 +35,9 @@ const Page = () => {
                 after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]" />
                 <nav className="fixed top-0 left-0 w-full p-5
                 "><h2>ChatMe</h2></nav>
-                <section className='min-h-[60vh] max-h-[60vh] block scroll-smooth overflow-y-auto 
-                overflow-x-clip rounded-md min-w-[85vw] max-w-[85vw] relative sm:h-[75vh]
-                md:min-w-[55vw] md:max-w-[55vw] lg:min-w-[55vw] lg:max-w-[55vw] '>
+                <section className='h-[60vh] block scroll-smooth overflow-y-auto 
+                overflow-x-clip rounded-md w-[85vw] relative sm:h-[75vh]
+                md:w-[55vw] lg:w-[55vw]'>
                     {messages && messages.map(m => (
                         <div key={m.id} className={`flex flex-col 
                             w-full
@@ -53,10 +53,8 @@ const Page = () => {
                                       dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
                                       dark:hover:text-white dark:hover:bg-gray-700`
                                     :
-                                    `relative block max-w-[58%] sm:min-w-[85%]
-                                    sm:max-w-[85%]
-                                     w-[max-content] md:max-w-[55%]
-                                    lg:max-w-[55%] rounded-lg mt-2 mr-[1px] text-wrap 
+                                    `relative block w-full h-max md:max-w-[65%]
+                                    lg:max-w-[75%] rounded-lg mt-2 mr-[1px] text-wrap 
                                     py-2.5 px-5 text-sm font-medium text-justify`
                                 }
                             >
