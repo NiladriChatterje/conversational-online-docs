@@ -26,7 +26,7 @@ type EnitirePackage = {
 export const Package: EnitirePackage = {};
 
 export const ollama = new ChatOllama({
-    baseUrl: 'http://localhost:11434',
+    baseUrl: process.env.NEXT_PUBLIC_PUBLIC_URL,
     useMMap: true,
     keepAlive: '20m',
     model: 'mistral',
