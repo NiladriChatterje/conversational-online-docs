@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 export async function sendURLForEmbedding(formData: FormData) {
     'use server'
     try {
-        const response = await fetch(`http://localhost:3000/api/get-answer?url=${formData.get('url')}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/get-answer?url=${formData.get('url')}`, {
             headers: {
                 "Content-Type": 'text/plain',
             },
