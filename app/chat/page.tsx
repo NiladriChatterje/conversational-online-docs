@@ -3,16 +3,22 @@ import { useRef } from 'react'
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useChat } from 'ai/react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import SVGArrow from '@/app/right-arrow.svg'
 
 const page = () => {
-    const { messages, input, setMessages, error, handleSubmit, handleInputChange } = useChat({
-        api: 'api/get-answer'
+    const { messages, isLoading, input, error, handleSubmit, handleInputChange } = useChat({
+        api: 'api/get-answer',
+        streamMode: 'text',
     });
     const router = useRouter();
     console.log(messages)
-
+    if (error) {
+        console.log(error.message);
+        // setTimeout(() => {
+        //      router.push('/')
+        // }, 2000)
+    }
     const inputRef = useRef<HTMLInputElement | any>(null);
 
     async function query() {
@@ -29,18 +35,18 @@ const page = () => {
             },
             body: ""
         });
-        // const { message } = await response.json()
+        const { message } = await response.json()
 
         console.log("response : ", response.json())
     }
 
     return (
         <>
-            <Toaster />
             <div className="flex min-h-screen flex-col items-center justify-center p-24 ">
                 <div className="absolute z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]" />
                 <nav className="fixed top-0 left-0 w-100% p-5"><h2>ChatMe</h2></nav>
                 <section className='min-h-[60vh] block scroll-smooth overflow-y-auto overflow-x-clip rounded-md min-w-[85vw] md:min-w-[55vw] lg:min-w-[55vw] '>
+
                     {messages && messages.map(m => (
                         <div key={m.id} className={`flex flex-col relative w-full 
                         items-${m.role === 'user' ? 'end' : 'start'}`}>
@@ -57,6 +63,9 @@ const page = () => {
 
                         </div>
                     ))}
+                    {isLoading ? <h1>
+                        Answer is getting generated...
+                    </h1> : null}
                 </section>
                 <form
                     onSubmit={(e) => {
@@ -75,7 +84,6 @@ const page = () => {
                         ref={inputRef}
                         value={input}
                         onChange={handleInputChange}
-                        // onKeyDown={e => { if (e.keyCode === 13) query() }}
                         className='text-black focus:text-white max-h-8 md:max-h-15 lg:max-h-15 w-[90%] rounded-md focus:bg-blue-900 ease-in duration-100 focus:outline-none focus:border-r-2 focus:border-r-blue-700 px-10 py-[2.5px] bg-transparent' />
                     <button type='submit'
                         className='bg-transparent border-none flex items-center justify-center'>
@@ -83,7 +91,6 @@ const page = () => {
                             className='cursor-pointer'
                             width={20}
                             src={SVGArrow}
-                            // onClick={query}
                             alt=''
                         />
                     </button>
