@@ -44,7 +44,7 @@ const Page = () => {
                     ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
                             <article
                                 className={m.role === 'user' ?
-                                    `relative w-max max-w-[55vw] block border-none 
+                                    `relative w-max max-w-[55%] block border-none 
                                     border-2 text-wrap
                                     border-slate-100 bg-slate-900 py-2.5 mt-5 mb-5 px-5 me-2
                                     text-sm font-medium text-white bg-white rounded-lg
@@ -53,10 +53,10 @@ const Page = () => {
                                       dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 
                                       dark:hover:text-white dark:hover:bg-gray-700`
                                     :
-                                    `relative block max-w-[58vw] sm:min-w-[85vw]
-                                    sm:max-w-[85vw]
-                                     w-[max-content] md:min-w-[55vw] 
-                                    lg:min-w-[55vw] rounded-lg mt-2 mr-[1px] text-wrap 
+                                    `relative block max-w-[58%] sm:min-w-[85%]
+                                    sm:max-w-[85%]
+                                     w-[max-content] md:max-w-[55%]
+                                    lg:max-w-[55%] rounded-lg mt-2 mr-[1px] text-wrap 
                                     py-2.5 px-5 text-sm font-medium text-justify`
                                 }
                             >
